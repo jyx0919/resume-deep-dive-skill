@@ -1,0 +1,7 @@
+interface:
+  display_name: "求职简历深挖"
+  short_description: "JD analysis, STAR interview, resume rewrite, and recruiter review"
+  default_prompt: "Use $resume-deep-dive to analyze my resume against a target JD and guide me through the five-stage evidence-first workflow."
+
+policy:
+  allow_implicit_invocation: true
