@@ -118,6 +118,10 @@ This skill enforces a five-stage resume workflow:
 
 The workflow never invents experience or metrics. When a number is unavailable, it looks for other verifiable evidence, such as completion, adoption, scope, process improvement, user feedback, or a clear before-and-after change.
 
+## License
+
+This project is released under the [MIT License](LICENSE).
+
 ## Reference
 
 The Skill uses the open Agent Skills structure described in the [OpenAI Skills documentation](https://developers.openai.com/api/docs/guides/tools-skills).
