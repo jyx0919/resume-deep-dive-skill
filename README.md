@@ -44,35 +44,175 @@ An evidence-first workflow for tailoring a resume to a specific job description.
 
 ### Codex：用户级安装
 
-将仓库克隆到 Codex 的用户级 Skills 目录：
+用户级安装表示：安装一次后，可以在 Codex 的不同对话和项目中继续使用这个 Skill。
 
-```bash
-git clone https://github.com/jyx0919/resume-deep-dive-skill.git ~/.codex/skills/resume-deep-dive
+最简单的安装方式，是把 `SKILL.md` 下载下来并交给 Codex 安装，不需要自己操作终端或寻找隐藏文件夹。
+
+#### 第一步：下载 `SKILL.md`
+
+1. 打开仓库中的 [`SKILL.md`](SKILL.md)；
+2. 点击页面右上方的下载按钮，或点击 **Raw** 后保存文件；
+3. 确认下载得到的文件名是 `SKILL.md`。
+
+#### 第二步：让 Codex 安装
+
+打开 Codex，新建一个对话，上传刚才下载的 `SKILL.md`，然后发送：
+
+```text
+请把我上传的 SKILL.md 安装为用户级 Codex Skill。
+Skill 名称为 resume-deep-dive，请保存到用户级 Skills 目录，保持文件内容不变。
+安装完成后，请告诉我保存路径，并确认是否可以通过 $resume-deep-dive 调用。
 ```
 
-安装后可以这样开始：
+Codex 会将文件保存到类似下面的位置：
+
+```text
+~/.codex/skills/resume-deep-dive/SKILL.md
+```
+
+如果 Codex 请求写入本地文件的权限，请先确认目标路径是 `resume-deep-dive` 的用户级 Skills 目录，再允许操作。
+
+只下载和安装 `SKILL.md` 就可以运行完整的简历工作流。仓库中的 `agents/openai.yaml` 主要用于显示名称、默认提示词等可选界面配置，不影响核心流程。
+
+#### 第三步：新建对话并开始使用
+
+安装完成后，新建一个 Codex 对话。如果暂时没有显示，可以重新打开 Codex，然后上传：
+
+- 目标岗位 JD，可以是图片、PDF 或文字；
+- 初始简历，建议使用 PDF、DOCX 或纯文本。
+
+发送以下指令：
 
 ```text
 使用 $resume-deep-dive。我会提供目标岗位 JD 和初始简历，请从第一阶段开始。
 ```
 
+正常情况下，Codex 会先分析岗位要求并输出“JD要求｜我的对应经历｜证据是否充分｜需要补充什么”表格，而不是直接修改简历。
+
+如果没有自动调用，可以再发送一次更明确的指令：
+
+```text
+请明确调用 $resume-deep-dive，并严格按照 SKILL.md 的五阶段工作流执行。现在只进行第一阶段，不要生成最终版简历。
+```
+
+#### 后续如何继续
+
+Skill 会按照五个阶段逐步进行，你不需要一次提供所有信息：
+
+1. 查看第一阶段的能力与证据表；
+2. 回答 AI 每轮提出的 1–2 个 STAR 问题；
+3. 不知道准确数字时直接说明“无法核实”，不要估算；
+4. 审核“原文｜修改后｜为什么这样改”的逐条建议；
+5. 修改完成后，让 AI 进行招聘经理 30 秒审阅；
+6. 只有确认前面内容无误后，再同意生成最终版简历。
+
+如果 AI 提前生成了最终版，可以发送：
+
+```text
+请停止生成最终版简历，回到当前阶段。信息没有补充完整、修改建议没有经过我确认前，不要进入下一阶段。
+```
+
+如果 Codex 无法直接安装上传的文件，再使用终端备用方式：
+
+```bash
+git clone https://github.com/jyx0919/resume-deep-dive-skill.git ~/.codex/skills/resume-deep-dive
+```
+
 ### Codex：项目级安装
 
-如果只想在某个项目中使用，可将 Skill 放在项目内：
+项目级安装表示：这个 Skill 只在当前项目或文件夹中使用，不会自动出现在其他项目里。适合希望把求职材料与 Skill 放在同一个独立目录中的用户。
+
+同样可以把下载好的 `SKILL.md` 上传给 Codex，然后发送：
+
+```text
+请把我上传的 SKILL.md 安装到当前项目中。
+Skill 名称为 resume-deep-dive，请保存为 .codex/skills/resume-deep-dive/SKILL.md，保持文件内容不变。
+安装完成后，请告诉我保存路径，并确认是否可以通过 $resume-deep-dive 调用。
+```
+
+如果希望使用终端安装，先进入目标项目目录，再运行：
 
 ```bash
 git clone https://github.com/jyx0919/resume-deep-dive-skill.git .codex/skills/resume-deep-dive
 ```
 
+安装后的目录结构应当是：
+
+```text
+当前项目/
+└── .codex/
+    └── skills/
+        └── resume-deep-dive/
+            └── SKILL.md
+```
+
+然后用 Codex 打开这个项目，新建对话，上传目标 JD 和初始简历，并发送：
+
+```text
+使用 $resume-deep-dive。我会提供目标岗位 JD 和初始简历，请从第一阶段开始。
+```
+
+如果你不确定用户级和项目级应该选哪一个：
+
+- 希望以后在多个求职对话中都能使用：选择用户级安装；
+- 只希望当前项目读取这个 Skill：选择项目级安装；
+- 两种方式的工作流相同，只是 Skill 的可用范围不同。
+
 ### 其他支持 Agent Skills 的 AI 工具
 
-本仓库的核心是符合 Agent Skills 结构的 `SKILL.md`。请根据目标工具的官方文档，将整个 Skill 文件夹复制或注册到它的 Skill/Capability 目录。`agents/openai.yaml` 是 OpenAI/Codex 的可选界面配置；其他工具可以忽略它。
+本仓库的核心是符合 Agent Skills 结构的 `SKILL.md`。是否能够原生安装主要取决于你使用的 AI 工具，而不是某个具体模型名称。
 
-不同工具的自动发现、附件读取、PDF/DOCX 处理和长期对话能力可能不同，因此不能保证所有阶段在所有 AI 产品中具有完全一致的体验。
+以下工具的官方文档已说明支持 Agent Skills：
+
+| 工具 | 安装位置或命令 | 调用方式 |
+| --- | --- | --- |
+| Cursor | 将文件夹放入 `~/.cursor/skills/resume-deep-dive/` 或项目的 `.cursor/skills/resume-deep-dive/` | 在 Agent 对话中输入 `/`，搜索 `resume-deep-dive` |
+| Claude Code | 将文件夹放入 `~/.claude/skills/resume-deep-dive/` | 输入 `/resume-deep-dive` |
+| Gemini CLI | `gemini skills install https://github.com/jyx0919/resume-deep-dive-skill` | 先用 `/skills list` 检查，再明确要求使用 `resume-deep-dive` |
+
+手动安装到这些工具时，需要建立 `resume-deep-dive` 文件夹并将 `SKILL.md` 放在其中；也可以直接复制整个仓库。其中：
+
+- `SKILL.md` 是所有工具需要读取的核心工作流；
+- `agents/openai.yaml` 是 OpenAI/Codex 的可选界面配置，其他工具可以忽略；
+- 不同工具的自动发现、附件读取、PDF/DOCX 处理和长期对话能力可能不同。
+
+本项目目前已经在 Codex 中验证完整工作流。Cursor、Claude Code 和 Gemini CLI 虽然支持 Agent Skills 标准，但本项目尚未逐一进行完整的端到端测试，因此不能保证体验完全一致。
+
+关于“哪些模型能用”：
+
+- Codex 中能够调用 Skills 的文本或推理模型可以使用；
+- Cursor Agent、Claude Code 和 Gemini CLI 中能够读取 Skills 的模型原则上可以使用；
+- 不限定某个 GPT、Claude 或 Gemini 型号，模型名称更新后通常不需要修改 `SKILL.md`；
+- 优先选择擅长长文本理解、多轮对话和结构化分析的模型；
+- 纯图片、视频或语音生成模型不适合执行这个简历工作流。
 
 ### 不支持 Agent Skills 的普通 AI
 
-可以上传或粘贴 `SKILL.md`，再提供目标 JD 和初始简历，并明确要求 AI 按文件中的五阶段工作流执行。此方式可以复用核心方法，但通常不具备自动发现和自动调用能力。
+没有安装 Codex，也没有使用 Cursor、Claude Code 或 Gemini CLI，仍然可以复用这个工作流。例如，可以在支持文件上传和多轮对话的普通 AI 网页或 App 中手动使用。
+
+#### 使用步骤
+
+1. 在 GitHub 仓库中打开 [`SKILL.md`](SKILL.md)；
+2. 下载 `SKILL.md`，或复制文件中的全部内容；
+3. 在同一个 AI 对话中上传或粘贴 `SKILL.md`；
+4. 上传目标岗位 JD 和初始简历；
+5. 发送下面的启动指令。
+
+```text
+请完整阅读我提供的 SKILL.md，并严格按照其中的五阶段工作流执行。
+我已经提供目标岗位 JD 和初始简历，请从第一阶段开始：先分析岗位要求和证据缺口，不要直接修改简历。
+没有的信息请写“待补充”，不要编造。
+```
+
+如果所用 AI 不支持上传 Markdown 文件，可以把 `SKILL.md` 的全部文字直接粘贴到对话中；如果不支持读取 PDF 或图片，需要将 JD 和简历转成文字后再提供。
+
+需要注意：
+
+- 普通 AI 不会真正“安装”这个 Skill；
+- 直接输入 `$resume-deep-dive` 通常不会生效；
+- 换一个新对话时，通常需要重新上传或粘贴 `SKILL.md`；
+- 部分模型可能跳过阶段或一次提出过多问题，此时需要提醒它严格遵守文件中的阶段门槛；
+- 如果工具无法保持较长的多轮上下文，可能会遗漏之前的采访回答，不适合完成整个五阶段流程。
 
 ## 推荐输入
 
